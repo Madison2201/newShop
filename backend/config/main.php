@@ -1,7 +1,5 @@
 <?php
 
-use yii\filters\AccessControl;
-
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -28,7 +26,7 @@ return [
             'cookieValidationKey' => $params['cookieValidationKey'],
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'common\entities\User',
             'enableAutoLogin' => true,
             'identityCookie' => [
                 'name' => '_identity-backend',
