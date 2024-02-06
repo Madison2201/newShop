@@ -9,6 +9,7 @@ use frontend\forms\ResendVerificationEmailForm;
 use frontend\forms\ResetPasswordForm;
 use frontend\forms\SignupForm;
 use frontend\forms\VerifyEmailForm;
+use frontend\services\auth\PasswordResetService;
 use frontend\services\auth\SignupService;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -161,6 +162,7 @@ class SiteController extends Controller
                 Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
                 return $this->goHome();
             } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
             }
         }
@@ -202,20 +204,29 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
+        $service = new PasswordResetService();
+
         try {
-            $model = new ResetPasswordForm($token);
+            $service->validateToken($token);
         } catch (InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
+        $form = new ResetPasswordForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $service->reset($token, $form);
+                Yii::$app->session->setFlash('success', 'New password saved.');
+                return $this->goHome();
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
 
-            return $this->goHome();
         }
 
         return $this->render('resetPassword', [
-            'model' => $model,
+            'model' => $form,
         ]);
     }
 
