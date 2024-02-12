@@ -4,23 +4,25 @@ namespace frontend\services\contact;
 
 use frontend\forms\ContactForm;
 use Yii;
+use yii\mail\MailerInterface;
 
 class ContactService
 {
     private $supportEmail;
     private $adminEmail;
+    private $mailer;
 
-    public function __construct($supportEmail, $adminEmail)
+    public function __construct($supportEmail, $adminEmail, MailerInterface $mailer)
     {
         $this->supportEmail = $supportEmail;
         $this->adminEmail = $adminEmail;
+        $this->mailer = $mailer;
     }
 
     public function sendEmail(ContactForm $form): void
     {
-        $sent = Yii::$app->mailer->compose()
+        $sent = $this->mailer->compose()
             ->setTo($this->adminEmail)
-            ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
             ->setFrom($this->supportEmail)
             ->setReplyTo([$form->email => $form->name])
             ->setSubject($form->subject)
