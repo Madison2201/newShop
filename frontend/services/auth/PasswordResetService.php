@@ -23,10 +23,7 @@ class PasswordResetService
     public function request(PasswordResetRequestForm $form): void
     {
         /* @var $user User */
-        $user = User::findOne([
-            'status' => User::STATUS_ACTIVE,
-            'email' => $form->email,
-        ]);
+        $this->getByEmail($form->email);
 
         if (!$user) {
             throw new \DomainException('User is not found');
@@ -34,9 +31,7 @@ class PasswordResetService
 
         $user->requestPasswordReset();
 
-        if (!$user->save()) {
-            throw new \RuntimeException('Saving error');
-        }
+        $this->save($user);
 
         $sent = $this
             ->mailer
@@ -67,12 +62,34 @@ class PasswordResetService
 
     public function reset(string $token, ResetPasswordForm $form)
     {
-        $user = User::findByPasswordResetToken($token);
+        $user = $this->existByPasswordResetToken($token);
         if ($user) {
             throw new InvalidArgumentException('User not found.');
         }
         $user->resetPassword($form->password);
+        $this->save($user);
 
+    }
+
+    private function getByEmail($email): User
+    {
+        if (!$user = User::findOne([
+            'status' => User::STATUS_ACTIVE,
+            'email' => $email,
+        ])) {
+            throw new \DomainException('User is not found');
+        }
+        return $user;
+
+    }
+
+    private function existByPasswordResetToken(string $token): User
+    {
+        return User::findByPasswordResetToken($token);
+    }
+
+    private function save(User $user): void
+    {
         if (!$user->save()) {
             throw new \RuntimeException('Saving error');
         }
