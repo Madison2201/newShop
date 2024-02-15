@@ -3,22 +3,29 @@
 namespace frontend\services\auth;
 
 use common\entities\User;
+use common\repositories\UserRepository;
 use frontend\forms\SignupForm;
 use Yii;
 
 class SignupService
 {
+    private $users;
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
     public function signup(SignupForm $form): User
     {
         if (User::find()->andWhere(['username' => $form->username])) {
             throw new \DomainException('Username is already exist');
         }
-        if (User::find()->andWhere(['email' => $form->email])) {
+        if ($this->users->getByEmail($form->email)) {
             throw new \DomainException('Email is already exist');
         }
 
         $user = User::signup($form->username, $form->email, $form->password);
-        $this->save($user);
+        $this->users->save($user);
         if (!$this->sendEmail($user)) {
             throw new \RuntimeException('Send email error');
         }
@@ -52,18 +59,7 @@ class SignupService
 //        $user = $this->getByEmailConfirmToken($token);
 //    }
 //
-//    private function getByEmailConfirmToken(string $token): User
-//    {
-//        if (!$user = User::findOne(['email_confirm_token' => $token])) {
-//            throw new \DomainException('User is not found.');
-//        }
-//        return $user;
-//    }
+//
 
-    private function save(User $user): void
-    {
-        if (!$user->save()) {
-            throw new \RuntimeException('Saving error');
-        }
-    }
+
 }
