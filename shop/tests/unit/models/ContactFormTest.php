@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\tests\unit\models;
+namespace models;
 
 use frontend\forms\ContactForm;
 use yii\mail\MessageInterface;

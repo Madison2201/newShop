@@ -1,7 +1,7 @@
 <?php
 
 namespace frontend\forms;
-use common\entities\User;
+use shop\entities\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\tests\functional;
+namespace shop\tests\functional;
 
 use frontend\tests\FunctionalTester;
 
@@ -47,10 +47,10 @@ class SignupCest
             'SignupForm[password]' => 'tester_password',
         ]);
 
-        $I->seeRecord('common\entities\User', [
+        $I->seeRecord('shop\entities\User', [
             'username' => 'tester',
             'email' => 'tester.email@example.com',
-            'status' => \common\entities\User::STATUS_INACTIVE
+            'status' => \shop\entities\User::STATUS_INACTIVE
         ]);
 
         $I->seeEmailIsSent();

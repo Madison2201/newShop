@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\tests\functional;
+namespace shop\tests\functional;
 
 use frontend\tests\FunctionalTester;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\tests\unit\models;
+namespace models;
 
 use common\fixtures\UserFixture;
 use frontend\forms\SignupForm;
@@ -34,11 +34,11 @@ class SignupFormTest extends \Codeception\Test\Unit
         $user = $model->signup();
         verify($user)->notEmpty();
 
-        /** @var \common\entities\User $user */
+        /** @var \shop\entities\User $user */
         $user = $this->tester->grabRecord('User', [
             'username' => 'some_username',
             'email' => 'some_email@example.com',
-            'status' => \common\entities\User::STATUS_INACTIVE
+            'status' => \shop\entities\User::STATUS_INACTIVE
         ]);
 
         $this->tester->seeEmailIsSent();

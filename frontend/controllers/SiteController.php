@@ -2,16 +2,17 @@
 
 namespace frontend\controllers;
 
-use frontend\forms\ContactForm;
 use common\forms\LoginForm;
+use frontend\forms\ContactForm;
 use frontend\forms\PasswordResetRequestForm;
 use frontend\forms\ResendVerificationEmailForm;
 use frontend\forms\ResetPasswordForm;
 use frontend\forms\SignupForm;
 use frontend\forms\VerifyEmailForm;
-use frontend\services\auth\PasswordResetService;
-use frontend\services\auth\SignupService;
-use frontend\services\contact\ContactService;
+use shop\services\auth\AuthService;
+use shop\services\auth\PasswordResetService;
+use shop\services\auth\SignupService;
+use shop\services\ContactService;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
@@ -24,11 +25,22 @@ use yii\web\Controller;
  */
 class SiteController extends Controller
 {
+    private $authService;
+    private $signupService;
     private $passwordResetService;
     private $contactService;
 
-    public function __construct($id, $module, PasswordResetService $passwordResetService, ContactService $contactService, array $config = [])
+    public function __construct(
+        $id,
+        $module,
+        AuthService $authService,
+        SignupService $signupService,
+        PasswordResetService $passwordResetService,
+        ContactService $contactService,
+        array $config = [])
     {
+        $this->authService = $authService;
+        $this->signupService = $signupService;
         $this->passwordResetService = $passwordResetService;
         $this->contactService = $contactService;
         parent::__construct($id, $module, $config);
@@ -180,7 +192,8 @@ class SiteController extends Controller
         $form = new SignupForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $user = (new SignupService())->signup($form);
+//                $user = (new SignupService())->signup($form);
+                $user = $this->signupService->signup($form);
                 Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
                 return $this->goHome();
             } catch (\DomainException $e) {
