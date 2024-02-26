@@ -2,13 +2,13 @@
 
 namespace frontend\controllers;
 
-use common\forms\LoginForm;
-use frontend\forms\ContactForm;
-use frontend\forms\PasswordResetRequestForm;
-use frontend\forms\ResendVerificationEmailForm;
-use frontend\forms\ResetPasswordForm;
-use frontend\forms\SignupForm;
-use frontend\forms\VerifyEmailForm;
+use shop\forms\ContactForm;
+use shop\forms\LoginForm;
+use shop\forms\PasswordResetRequestForm;
+use shop\forms\ResendVerificationEmailForm;
+use shop\forms\ResetPasswordForm;
+use shop\forms\SignupForm;
+use shop\forms\VerifyEmailForm;
 use shop\services\auth\AuthService;
 use shop\services\auth\PasswordResetService;
 use shop\services\auth\SignupService;

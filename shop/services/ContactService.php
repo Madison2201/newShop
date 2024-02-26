@@ -2,7 +2,7 @@
 
 namespace shop\services;
 
-use frontend\forms\ContactForm;
+use shop\forms\ContactForm;
 use yii\mail\MailerInterface;
 
 class ContactService

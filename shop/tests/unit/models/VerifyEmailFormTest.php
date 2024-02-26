@@ -3,7 +3,7 @@
 namespace models;
 
 use common\fixtures\UserFixture;
-use frontend\forms\VerifyEmailForm;
+use shop\forms\VerifyEmailForm;
 
 class VerifyEmailFormTest extends \Codeception\Test\Unit
 {
