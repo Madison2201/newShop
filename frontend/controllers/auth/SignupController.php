@@ -52,7 +52,7 @@ class SignupController extends Controller
             }
         }
 
-        return $this->render('signup', [
+        return $this->render('@frontend/views/auth/signup', [
             'model' => $form,
         ]);
     }

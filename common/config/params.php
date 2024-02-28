@@ -9,4 +9,6 @@ return [
     'cookieDomain' => '.example.com',
     'frontendHostInfo' => 'http://example.com',
     'backendHostInfo' => 'http://backend.example.com',
+    'user.rememberMeDuration' => 3600 * 24 * 30,
+
 ];

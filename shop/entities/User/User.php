@@ -1,10 +1,12 @@
 <?php
 
-namespace shop\entities;
+namespace shop\entities\User;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -22,6 +24,7 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property $networks;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -56,6 +59,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             TimestampBehavior::class,
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relation' => ['networks'],
+            ],
         ];
     }
 
@@ -251,7 +258,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function resetPassword($password)
     {
-        if (empty($this->password_reset_token)){
+        if (empty($this->password_reset_token)) {
             throw new \DomainException('Password resetting is not requested');
         }
         $this->setPassword($password);
@@ -266,4 +273,27 @@ class User extends ActiveRecord implements IdentityInterface
         }
         $this->generatePasswordResetToken();
     }
+
+    public function getNetworks(): ActiveQuery
+    {
+        return $this->hasMany(Network::class, ['user_id' => 'id']);
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
+    }
+
+    public static function signupByNetwork($network, $identity): self
+    {
+        $user = new static();
+        $user->created_at = time();
+        $user->status = self::STATUS_ACTIVE;
+        $user->generateAuthKey();
+        $user->networks = [Network::create($network, $identity)];
+        return $user;
+    }
+
 }

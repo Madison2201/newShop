@@ -38,7 +38,7 @@ class ResetController extends Controller
 
         }
 
-        return $this->render('requestPasswordResetToken', [
+        return $this->render('@frontend/views/auth/requestPasswordResetToken', [
             'model' => $form,
         ]);
     }
@@ -66,7 +66,7 @@ class ResetController extends Controller
 
         }
 
-        return $this->render('resetPassword', [
+        return $this->render('@frontend/views/auth/resetPassword', [
             'model' => $form,
         ]);
     }
