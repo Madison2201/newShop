@@ -2,7 +2,7 @@
 
 namespace frontend\controllers\auth;
 
-use shop\forms\SignupForm;
+use shop\forms\auth\SignupForm;
 use shop\services\auth\SignupService;
 use Yii;
 use yii\filters\AccessControl;
@@ -52,7 +52,7 @@ class SignupController extends Controller
             }
         }
 
-        return $this->render('@frontend/views/auth/signup', [
+        return $this->render('signup', [
             'model' => $form,
         ]);
     }

@@ -2,8 +2,8 @@
 
 namespace frontend\controllers\auth;
 
-use shop\forms\PasswordResetRequestForm;
-use shop\forms\ResetPasswordForm;
+use shop\forms\auth\PasswordResetRequestForm;
+use shop\forms\auth\ResetPasswordForm;
 use shop\services\auth\PasswordResetService;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -38,7 +38,7 @@ class ResetController extends Controller
 
         }
 
-        return $this->render('@frontend/views/auth/requestPasswordResetToken', [
+        return $this->render('requestPasswordResetToken', [
             'model' => $form,
         ]);
     }
@@ -66,7 +66,7 @@ class ResetController extends Controller
 
         }
 
-        return $this->render('@frontend/views/auth/resetPassword', [
+        return $this->render('resetPassword', [
             'model' => $form,
         ]);
     }

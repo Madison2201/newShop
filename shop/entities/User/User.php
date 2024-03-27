@@ -66,16 +66,6 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            ['status', 'default', 'value' => self::STATUS_INACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETE]],
-        ];
-    }
 
     /**
      * {@inheritdoc}
@@ -251,6 +241,18 @@ class User extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
+    public static function create(string $username, string $email, string $password): self
+    {
+        $user = new static();
+        $user->username = $username;
+        $user->email = $email;
+        $user->setPassword(!empty($password) ? $password : Yii::$app->security->generateRandomString());
+        $user->created_at = time();
+        $user->status = self::STATUS_ACTIVE;
+        $user->auth_key = Yii::$app->security->generateRandomString();
+        return $user;
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
@@ -294,6 +296,25 @@ class User extends ActiveRecord implements IdentityInterface
         $user->generateAuthKey();
         $user->networks = [Network::create($network, $identity)];
         return $user;
+    }
+
+    public function attachNetwork($network, $identity): void
+    {
+        $networks = $this->networks;
+        foreach ($networks as $current) {
+            if ($current->isFor($network, $identity)) {
+                throw new \DomainException('Network is already attached.');
+            }
+            $networks[] = Network::create($network, $identity);
+            $this->networks = $networks;
+        }
+    }
+
+    public function edit(string $username, string $email)
+    {
+        $this->username = $username;
+        $this->email = $email;
+        $this->updated_at = time();
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace frontend\controllers\auth;
 
-use shop\forms\LoginForm;
+use shop\forms\auth\LoginForm;
 use shop\services\auth\AuthService;
 use Yii;
 use yii\web\Controller;
@@ -37,7 +37,7 @@ class AuthController extends Controller
 
 //        $form->password = '';
 
-        return $this->render('@frontend/views/auth/login', [
+        return $this->render('login', [
             'model' => $form,
         ]);
     }

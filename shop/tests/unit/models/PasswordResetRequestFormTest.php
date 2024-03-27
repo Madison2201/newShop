@@ -4,7 +4,7 @@ namespace models;
 
 use common\fixtures\UserFixture as UserFixture;
 use shop\entities\User\User;
-use shop\forms\PasswordResetRequestForm;
+use shop\forms\auth\PasswordResetRequestForm;
 use Yii;
 
 class PasswordResetRequestFormTest extends \Codeception\Test\Unit

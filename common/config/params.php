@@ -10,5 +10,5 @@ return [
     'frontendHostInfo' => 'http://example.com',
     'backendHostInfo' => 'http://backend.example.com',
     'user.rememberMeDuration' => 3600 * 24 * 30,
-
+    'bsVersion' => '4.x',
 ];

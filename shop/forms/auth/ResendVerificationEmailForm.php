@@ -1,6 +1,6 @@
 <?php
 
-namespace shop\forms;
+namespace shop\forms\auth;
 use frontend\forms\User;
 use frontend\forms\Yii;
 use yii\base\Model;

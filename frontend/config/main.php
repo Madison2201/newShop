@@ -29,7 +29,39 @@ return [
                     'clientId' => 'facebook_client_id',
                     'clientSecret' => 'секретный_ключ_facebook_client',
                 ],
-                // и т.д.
+                'github' => [
+                    'class' => 'yii\authclient\clients\GitHub',
+                    'clientId' => 'github_client_id',
+                    'clientSecret' => 'github_client_secret',
+                ],
+                'linkedin' => [
+                    'class' => 'yii\authclient\clients\LinkedIn',
+                    'clientId' => 'linkedin_client_id',
+                    'clientSecret' => 'linkedin_client_secret',
+                ],
+                'live' => [
+                    'class' => 'yii\authclient\clients\Live',
+                    'clientId' => 'live_client_id',
+                    'clientSecret' => 'live_client_secret',
+                ],
+                'twitter' => [
+                    'class' => 'yii\authclient\clients\Twitter',
+                    'attributeParams' => [
+                        'include_email' => 'true'
+                    ],
+                    'consumerKey' => 'twitter_consumer_key',
+                    'consumerSecret' => 'twitter_consumer_secret',
+                ],
+                'vkontakte' => [
+                    'class' => 'yii\authclient\clients\VKontakte',
+                    'clientId' => 'vkontakte_client_id',
+                    'clientSecret' => 'vkontakte_client_secret',
+                ],
+                'yandex' => [
+                    'class' => 'yii\authclient\clients\Yandex',
+                    'clientId' => 'yandex_client_id',
+                    'clientSecret' => 'yandex_client_secret',
+                ],
             ],
         ],
         'user' => [
