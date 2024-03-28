@@ -2,6 +2,7 @@
 
 namespace shop\entities\Shop;
 
+use shop\entities\behaviors\MetaBehavior;
 use shop\entities\Meta;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
@@ -14,7 +15,7 @@ use yii\helpers\Json;
  */
 class Brand extends ActiveRecord
 {
-    public $meta;
+    public Meta $meta;
 
     public static function create(string $name, string $slug, Meta $meta): self
     {
@@ -37,21 +38,11 @@ class Brand extends ActiveRecord
         return "{{%shop_brands}}";
     }
 
-    public function afterFind(): void
+    public function behaviors(): array
     {
-        $meta = Json::decode($this->getAttribute('meta_json'));
-        $this->meta = new Meta($meta['title'], $meta['description'], $meta['keywords']);
-        parent::afterFind();
+        return [
+            'class' => MetaBehavior::class,
+            'jsonAttribute' => 'meta_json',
+        ];
     }
-
-    public function beforeSave($insert): bool
-    {
-        $this->setAttribute('meta_json', Json::encode([
-            'title' => $this->meta->title,
-            'description' => $this->meta->description,
-            'keywords' => $this->meta->keywords,
-        ]));
-        return parent::beforeSave($insert);
-    }
-
 }

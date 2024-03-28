@@ -8,7 +8,7 @@ use shop\repositories\Shop\TagRepository;
 
 class TagManageService
 {
-    private $tags;
+    private TagRepository $tags;
 
     public function __construct(TagRepository $tags)
     {

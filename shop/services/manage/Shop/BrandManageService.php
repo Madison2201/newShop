@@ -4,28 +4,27 @@ namespace shop\services\manage\Shop;
 
 use shop\entities\Meta;
 use shop\entities\Shop\Brand;
-use shop\forms\manage\MetaForm;
 use shop\forms\manage\Shop\BrandForm;
 use shop\repositories\Shop\BrandRepository;
 
 class BrandManageService
 {
-    private $brands;
+    private BrandRepository $brands;
 
     public function __construct(BrandRepository $brands)
     {
         $this->brands = $brands;
     }
 
-    public function create(BrandForm $form, MetaForm $metaForm): Brand
+    public function create(BrandForm $form): Brand
     {
         $brand = Brand::create(
             $form->name,
             $form->slug,
             new Meta(
-                $metaForm->title,
-                $metaForm->description,
-                $metaForm->keywords
+                $form->meta->title,
+                $form->meta->description,
+                $form->meta->keywords
             )
         );
         $this->brands->save($brand);
@@ -39,9 +38,17 @@ class BrandManageService
             $form->name,
             $form->slug,
             new Meta(
-                $form->_meta->title,
-                $form->_meta
+                $form->meta->title,
+                $form->meta->description,
+                $form->meta->keywords
             )
         );
+        $this->brands->save($brand);
+    }
+
+    public function remove(int $id): void
+    {
+        $brand = $this->brands->get($id);
+        $this->brands->remove($brand);
     }
 }
