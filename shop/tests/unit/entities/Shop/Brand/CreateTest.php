@@ -4,6 +4,7 @@ namespace shop\tests\unit\entities\Shop\Brand;
 
 use Codeception\Test\Unit;
 use shop\entities\Meta;
+use shop\entities\Shop\Brand;
 
 class CreateTest extends Unit
 {

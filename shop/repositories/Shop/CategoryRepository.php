@@ -9,22 +9,22 @@ class CategoryRepository
 {
     public function get(int $id): Category
     {
-        if (!$tag = Category::findOne($id)) {
+        if (!$category = Category::findOne($id)) {
             throw new NotFoundException('Category is not found.');
         }
-        return $tag;
+        return $category;
     }
 
-    public function save(Category $tag): void
+    public function save(Category $category): void
     {
-        if (!$tag->save()) {
+        if (!$category->save()) {
             throw new \RuntimeException('Saving error.');
         }
     }
 
-    public function remove(Category $tag): void
+    public function remove(Category $category): void
     {
-        if (!$tag->delete()) {
+        if (!$category->delete()) {
             throw new \RuntimeException('Removing error.');
         }
     }

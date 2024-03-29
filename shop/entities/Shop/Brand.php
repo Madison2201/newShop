@@ -42,7 +42,7 @@ class Brand extends ActiveRecord
     {
         return [
             'class' => MetaBehavior::class,
-            'jsonAttribute' => 'meta_json',
+//            'jsonAttribute' => 'meta_json',
         ];
     }
 }

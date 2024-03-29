@@ -17,10 +17,12 @@ abstract class CompositeForm extends Model
         foreach ($this->forms as $name => $form) {
             if (is_array($form)) {
                 foreach ($form as $itemName => $itemForm) {
-                    $success = $this->loadInternal($data, $itemForm, $formName, $itemName) && $success;
+//                    $success = $this->loadInternal($data, $itemForm, $formName, $itemName) && $success;
+                    $success = Model::loadMultiple($form, $data, $formName ? null : $name) && $success;
                 }
             } else {
-                $success = $this->loadInternal($data, $form, $formName, $name) && $success;
+//                $success = $this->loadInternal($data, $form, $formName, $name) && $success;
+                $success = $form->load($data, $formName !== '' ? null : $name) && $success;
             }
         }
         return $success;
