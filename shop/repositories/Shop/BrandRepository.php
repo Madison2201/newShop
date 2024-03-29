@@ -10,7 +10,7 @@ class BrandRepository
     public function get(int $id): Brand
     {
         if (!$brand = Brand::findOne($id)) {
-            throw new NotFoundException('Tag is not found.');
+            throw new NotFoundException('Brand is not found.');
         }
         return $brand;
     }
