@@ -28,4 +28,9 @@ class TagRepository
             throw new \RuntimeException('Removing error.');
         }
     }
+
+    public function findByName($name): ?Tag
+    {
+        return Tag::findOne(['name' => $name]);
+    }
 }

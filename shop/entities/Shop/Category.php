@@ -9,6 +9,7 @@ use shop\entities\Shop\queries\CategoryQuery;
 use yii\db\ActiveRecord;
 
 /**
+ * @property integer $id
  * @property string $name
  * @property string $slug
  * @property string $title
