@@ -2,12 +2,13 @@
 
 namespace shop\entities\Shop\Product;
 
+use DomainException;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
-use PhpParser\Node\Stmt\If_;
 use shop\entities\behaviors\MetaBehavior;
 use shop\entities\Meta;
 use shop\entities\Shop\Brand;
 use shop\entities\Shop\Category;
+use shop\entities\Shop\Tag;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
@@ -66,13 +67,13 @@ class Product extends ActiveRecord
         $this->meta = $meta;
     }
 
-    public function setPrice($new, $old): void
+    public function setPrice(int $new, int $old): void
     {
         $this->price_new = $new;
         $this->price_old = $old;
     }
 
-    public function setValue(int $id, $value): void
+    public function setValue(int $id, string $value): void
     {
         $values = $this->values;
         foreach ($values as $val) {
@@ -103,7 +104,7 @@ class Product extends ActiveRecord
                 return $modification;
             }
         }
-        throw new \DomainException('Modification is not found.');
+        throw new DomainException('Modification is not found.');
     }
 
     public function addModification(string $code, string $name, string $price): void
@@ -111,24 +112,96 @@ class Product extends ActiveRecord
         $modifications = $this->modifications;
         foreach ($modifications as $modification) {
             if ($modification->isCodeEqualTo($code)) {
-                throw new \DomainException('Modification already exists.');
+                throw new DomainException('Modification already exists.');
             }
         }
         $modifications[] = Modification::create($code, $name, $price);
         $this->modifications = $modifications;
     }
 
-    public function editModification(int $id,string $code, string $name, string $price): void
+    public function editModification(int $id, string $code, string $name, string $price): void
     {
         $modifications = $this->modifications;
         foreach ($modifications as $i => $modification) {
             if ($modification->isIdEqualTo($id)) {
-                $modification->edit($code,$name,$price);
+                $modification->edit($code, $name, $price);
                 $this->modifications[$i] = $modification;
             }
         }
         $modifications[] = Modification::create($code, $name, $price);
         $this->modifications = $modifications;
+    }
+
+    public function addReview(int $userId, int $vote, string $text): void
+    {
+        $reviews = $this->reviews;
+        $reviews[] = Review::create($userId, $vote, $text);
+        $this->setReviews($reviews);
+    }
+
+    public function editReview(int $id, int $vote, string $text): void
+    {
+        $callback = function (Review $review) use ($vote, $text) {
+            $review->edit($vote, $text);
+        };
+        $this->doWithReview($id, $callback);
+    }
+
+    private function doWithReview(int $id, callable $callback): void
+    {
+        $reviews = $this->reviews;
+        foreach ($reviews as $review) {
+            if ($review->isIdEqualTo($id)) {
+                $callback($review);
+                $this->setReviews($reviews);
+                return;
+            }
+        }
+        throw new DomainException('Review is not found');
+    }
+
+    public function activateReview(int $id): void
+    {
+        $this->doWithReview($id, function (Review $review) {
+            $review->activate();
+        });
+    }
+
+    public function draftReview(int $id): void
+    {
+        $callback = function (Review $review) {
+            $review->draft();
+        };
+        $this->doWithReview($id, $callback);
+    }
+
+    public function removeReview(int $id): void
+    {
+        $reviews = $this->reviews;
+        foreach ($reviews as $i => $review) {
+            if ($review->isIdEqualTo($id)) {
+                unset($reviews[$i]);
+                $this->setReviews($reviews);
+                return;
+            }
+        }
+        throw new DomainException('Review is not found');
+    }
+
+    public function setReviews(array $reviews): void
+    {
+        $amount = 0;
+        $total = 0;
+
+        foreach ($reviews as $review) {
+            if ($review->isActive()) {
+                $amount++;
+                $total += $review->getRating();
+            }
+        }
+
+        $this->reviews = $reviews;
+        $this->rating = $amount ? $total / $amount : null;
     }
 
     public function changeMainCategory(int $categoryId): void
@@ -158,7 +231,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Assignment is not found');
+        throw new DomainException('Assignment is not found');
     }
 
     public function revokeCategories(): void
@@ -183,7 +256,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Photo is not found');
+        throw new DomainException('Photo is not found');
     }
 
     public function removePhotos(): void
@@ -202,7 +275,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Photo is not found.');
+        throw new DomainException('Photo is not found.');
     }
 
     public function movePhotoDown(int $id): void
@@ -216,7 +289,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Photo is not found.');
+        throw new DomainException('Photo is not found.');
     }
 
     private function setPhotos(array $photos): void
@@ -249,7 +322,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Assigment is not found');
+        throw new DomainException('Assigment is not found');
     }
 
     public function revokeTags(): void
@@ -279,7 +352,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        throw new \DomainException('Assigment is not found');
+        throw new DomainException('Assigment is not found');
     }
 
     public function getBrand(): ActiveQuery

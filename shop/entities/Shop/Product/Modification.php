@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
  * @property string $code
  * @property string $name
  * @property string $price
+ * @property int $quantity
  */
 class Modification extends ActiveRecord
 {
