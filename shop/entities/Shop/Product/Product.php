@@ -136,7 +136,7 @@ class Product extends ActiveRecord
     {
         $reviews = $this->reviews;
         $reviews[] = Review::create($userId, $vote, $text);
-        $this->setReviews($reviews);
+        $this->updateReviews($reviews);
     }
 
     public function editReview(int $id, int $vote, string $text): void
@@ -153,7 +153,7 @@ class Product extends ActiveRecord
         foreach ($reviews as $review) {
             if ($review->isIdEqualTo($id)) {
                 $callback($review);
-                $this->setReviews($reviews);
+                $this->updateReviews($reviews);
                 return;
             }
         }
@@ -181,14 +181,14 @@ class Product extends ActiveRecord
         foreach ($reviews as $i => $review) {
             if ($review->isIdEqualTo($id)) {
                 unset($reviews[$i]);
-                $this->setReviews($reviews);
+                $this->updateReviews($reviews);
                 return;
             }
         }
         throw new DomainException('Review is not found');
     }
 
-    public function setReviews(array $reviews): void
+    public function updateReviews(array $reviews): void
     {
         $amount = 0;
         $total = 0;
@@ -243,7 +243,7 @@ class Product extends ActiveRecord
     {
         $photos = $this->photos;
         $photos[] = Photo::create($file);
-        $this->setPhotos($photos);
+        $this->updatePhotos($photos);
     }
 
     public function removePhoto(int $id): void
@@ -252,7 +252,7 @@ class Product extends ActiveRecord
         foreach ($photos as $i => $photo) {
             if ($photo->isIdEqualTo($id)) {
                 unset($photos[$i]);
-                $this->setPhotos($photos);
+                $this->updatePhotos($photos);
                 return;
             }
         }
@@ -261,17 +261,19 @@ class Product extends ActiveRecord
 
     public function removePhotos(): void
     {
-        $this->setPhotos([]);
+        $this->updatePhotos([]);
     }
 
     public function movePhotoUp(int $id): void
     {
         $photos = $this->photos;
         foreach ($photos as $i => $photo) {
-            if ($photo->isIdEqualTo($id) && $prev = $photos[$i - 1] ?? null) {
-                $photos[$i] = $prev;
-                $photos[$i - 1] = $photo;
-                $this->setPhotos($photos);
+            if ($photo->isIdEqualTo($id)) {
+                if ($prev = $photos[$i - 1] ?? null) {
+                    $photos[$i] = $prev;
+                    $photos[$i - 1] = $photo;
+                    $this->updatePhotos($photos);
+                }
                 return;
             }
         }
@@ -282,17 +284,19 @@ class Product extends ActiveRecord
     {
         $photos = $this->photos;
         foreach ($photos as $i => $photo) {
-            if ($photo->isIdEqualTo($id) && $next = $photos[$i + 1] ?? null) {
-                $photos[$i] = $next;
-                $photos[$i + 1] = $photo;
-                $this->setPhotos($photos);
+            if ($photo->isIdEqualTo($id)) {
+                if ($next = $photos[$i + 1] ?? null) {
+                    $photos[$i] = $next;
+                    $photos[$i + 1] = $photo;
+                    $this->updatePhotos($photos);
+                }
                 return;
             }
         }
         throw new DomainException('Photo is not found.');
     }
 
-    private function setPhotos(array $photos): void
+    private function updatePhotos(array $photos): void
     {
         foreach ($photos as $i => $photo) {
             $photo->setSort($i);
@@ -367,7 +371,17 @@ class Product extends ActiveRecord
 
     public function getCategoryAssignments(): ActiveQuery
     {
-        return $this->hasOne(CategoryAssignment::class, ['product_id' => 'id']);
+        return $this->hasMany(CategoryAssignment::class, ['product_id' => 'id']);
+    }
+
+    public function getTagAssignments(): ActiveQuery
+    {
+        return $this->hasMany(TagAssignment::class, ['product_id' => 'id']);
+    }
+
+    public function getModifications(): ActiveQuery
+    {
+        return $this->hasMany(Modification::class, ['product_id' => 'id']);
     }
 
     public function getValues(): ActiveQuery
@@ -378,6 +392,16 @@ class Product extends ActiveRecord
     public function getPhotos(): ActiveQuery
     {
         return $this->hasMany(Photo::class, ['product_id' => 'id'])->orderBy('sort');
+    }
+
+    public function getRelatedAssignments(): ActiveQuery
+    {
+        return $this->hasMany(RelatedAssignment::class, ['product_id' => 'id']);
+    }
+
+    public function getReviews(): ActiveQuery
+    {
+        return $this->hasMany(Review::class, ['product_id' => 'id']);
     }
 
     public static function tableName(): string
@@ -391,7 +415,7 @@ class Product extends ActiveRecord
             MetaBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'values', 'photos',],
+                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews'],
             ],
         ];
     }
