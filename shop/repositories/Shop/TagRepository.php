@@ -29,7 +29,7 @@ class TagRepository
         }
     }
 
-    public function findByName($name): ?Tag
+    public function findByName(string $name): ?Tag
     {
         return Tag::findOne(['name' => $name]);
     }

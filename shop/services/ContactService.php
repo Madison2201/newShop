@@ -9,7 +9,7 @@ class ContactService
 {
     private $supportEmail;
     private $adminEmail;
-    private $mailer;
+    private MailerInterface $mailer;
 
     public function __construct($supportEmail, $adminEmail, MailerInterface $mailer)
     {

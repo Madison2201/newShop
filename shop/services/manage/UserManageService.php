@@ -9,7 +9,7 @@ use shop\repositories\UserRepository;
 
 class UserManageService
 {
-    private $repository;
+    private UserRepository $repository;
 
     public function __construct(UserRepository $repository)
     {
@@ -27,7 +27,7 @@ class UserManageService
         return $user;
     }
 
-    public function edit($id, UserEditForm $form): void
+    public function edit(int $id, UserEditForm $form): void
     {
         $user = $this->repository->getById($id);
         $user->edit(

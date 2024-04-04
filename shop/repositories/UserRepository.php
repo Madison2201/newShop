@@ -19,7 +19,7 @@ class UserRepository
         }
     }
 
-    public function getByEmail($email): User
+    public function getByEmail(string $email): User
     {
         return $this->getBy([
             'status' => User::STATUS_ACTIVE,
@@ -27,7 +27,7 @@ class UserRepository
         ]);
     }
 
-    public function getByPasswordResetToken($token): User
+    public function getByPasswordResetToken(string $token): User
     {
         return $this->getBy(['password_reset_token' => $token]);
     }
@@ -45,7 +45,7 @@ class UserRepository
         return $user;
     }
 
-    public function findByUsernameOrEmail($value): ?User
+    public function findByUsernameOrEmail(string $value): ?User
     {
         return User::find()->andWhere(['or', ['username' => $value], ['email' => $value]])->one();
     }
@@ -55,7 +55,7 @@ class UserRepository
         return User::find()->joinWith('networks n')->andWhere(['n.network' => $network, 'n.identity' => $identity])->one();
     }
 
-    public function getById($id): User
+    public function getById(int $id): User
     {
         return $this->getBy(['id' => $id]);
     }

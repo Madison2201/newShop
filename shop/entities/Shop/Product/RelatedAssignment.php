@@ -10,16 +10,16 @@ use yii\db\ActiveRecord;
  */
 class RelatedAssignment extends ActiveRecord
 {
-    public static function create($productId): self
+    public static function create(int $productId): self
     {
         $assignment = new static();
         $assignment->related_id = $productId;
         return $assignment;
     }
 
-    public function isForProduct($id): bool
+    public function isForProduct(int $id): bool
     {
-        return $this->related_id == $id;
+        return $this->related_id === $id;
     }
 
     public static function tableName(): string

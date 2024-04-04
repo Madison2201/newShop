@@ -25,7 +25,7 @@ class TagManageService
         return $tag;
     }
 
-    public function edit($id, TagForm $form): void
+    public function edit(int $id, TagForm $form): void
     {
         $tag = $this->tags->get($id);
         $tag->edit(
@@ -35,7 +35,7 @@ class TagManageService
         $this->tags->save($tag);
     }
 
-    public function remove($id): void
+    public function remove(int $id): void
     {
         $tag = $this->tags->get($id);
         $this->tags->remove($tag);
