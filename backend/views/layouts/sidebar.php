@@ -38,6 +38,7 @@
                         ['label' => 'Management', 'options' => ['class' => 'header'], 'icon' => 'home'],
                 ['label' => 'Shop', 'icon' => 'folder', 'items' => [
                     ['label' => 'Brands', 'icon' => 'brush', 'url' => ['shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
+                    ['label' => 'Tags', 'icon' => 'tag', 'url' => ['shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
                 ]],
                     [
                         'label' => 'Пользователи',

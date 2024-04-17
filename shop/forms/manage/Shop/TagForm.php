@@ -8,9 +8,9 @@ use yii\base\Model;
 
 class TagForm extends Model
 {
-    public string $name;
-    public string $slug;
-    private Tag|null $_tag;
+    public $name;
+    public $slug;
+    private $_tag;
 
     public function __construct(Tag $tag = null, $config = [])
     {
