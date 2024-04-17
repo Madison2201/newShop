@@ -12,10 +12,10 @@ use shop\validators\SlugValidator;
  */
 class BrandForm extends CompositeForm
 {
-    public string $name;
-    public string $slug;
+    public $name;
+    public $slug;
 
-    private Brand|null $_brand;
+    private $_brand;
 
     public function __construct(Brand $brand = null, $config = [])
     {

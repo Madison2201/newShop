@@ -7,9 +7,9 @@ use yii\base\Model;
 
 class  MetaForm extends Model
 {
-    public string $title;
-    public string $description;
-    public string $keywords;
+    public $title;
+    public $description;
+    public $keywords;
 
     public function __construct(Meta $meta = null, $config = [])
     {

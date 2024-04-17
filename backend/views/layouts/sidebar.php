@@ -35,6 +35,10 @@
             <?php
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
+                        ['label' => 'Management', 'options' => ['class' => 'header'], 'icon' => 'home'],
+                ['label' => 'Shop', 'icon' => 'folder', 'items' => [
+                    ['label' => 'Brands', 'icon' => 'brush', 'url' => ['shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
+                ]],
                     [
                         'label' => 'Пользователи',
                         'icon' => 'user',
