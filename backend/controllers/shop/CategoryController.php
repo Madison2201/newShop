@@ -2,22 +2,24 @@
 
 namespace backend\controllers\shop;
 
-use backend\forms\Shop\TagSearch;
+use backend\forms\Shop\CategorySearch;
 use DomainException;
+use shop\entities\Shop\Category;
 use shop\entities\Shop\Tag;
+use shop\forms\manage\Shop\CategoryForm;
 use shop\forms\manage\Shop\TagForm;
-use shop\services\manage\Shop\TagManageService;
+use shop\services\manage\Shop\CategoryManageService;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
-class TagController extends Controller
+class CategoryController extends Controller
 {
-    private TagManageService $service;
+    private CategoryManageService $service;
 
-    public function __construct($id, $module, TagManageService $service, $config = [])
+    public function __construct($id, $module, CategoryManageService $service, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
@@ -30,6 +32,8 @@ class TagController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'move-up' => ['POST'],
+                    'move-down' => ['POST'],
                 ],
             ],
         ];
@@ -37,7 +41,7 @@ class TagController extends Controller
 
     public function actionIndex(): string|Response
     {
-        $searchModel = new TagSearch();
+        $searchModel = new CategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -51,13 +55,13 @@ class TagController extends Controller
     public function actionView(int $id): string|Response
     {
         return $this->render('view', [
-            'tag' => $this->findModel($id),
+            'category' => $this->findModel($id),
         ]);
     }
 
     public function actionCreate(): string|Response
     {
-        $form = new TagForm();
+        $form = new CategoryForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $brand = $this->service->create($form);
@@ -78,12 +82,12 @@ class TagController extends Controller
      */
     public function actionUpdate(int $id): string|Response
     {
-        $tag= $this->findModel($id);
-        $form = new TagForm($tag);
+        $category = $this->findModel($id);
+        $form = new CategoryForm($category);
         if ($form->load($this->request->post()) && $form->validate()) {
             try {
-                $this->service->edit($tag->id, $form);
-                return $this->redirect(['view', 'id' => $tag->id]);
+                $this->service->edit($category->id, $form);
+                return $this->redirect(['view', 'id' => $category->id]);
             } catch (DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -93,7 +97,7 @@ class TagController extends Controller
 
         return $this->render('update', [
             'model' => $form,
-            'tag' => $tag,
+            'category' => $category,
         ]);
     }
 
@@ -113,12 +117,24 @@ class TagController extends Controller
     /**
      * @throws NotFoundHttpException
      */
-    protected function findModel($id): ?Tag
+    protected function findModel($id): ?Category
     {
-        if (($model = Tag::findOne(['id' => $id])) !== null) {
+        if (($model = Category::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionMoveUp(int $id): Response
+    {
+        $this->service->moveUp($id);
+        return $this->redirect(['index']);
+    }
+
+    public function actionMoveDown(int $id): Response
+    {
+        $this->service->moveDown($id);
+        return $this->redirect(['index']);
     }
 }

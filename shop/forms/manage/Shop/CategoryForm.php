@@ -6,18 +6,19 @@ use shop\entities\Shop\Category;
 use shop\forms\CompositeForm;
 use shop\forms\manage\MetaForm;
 use shop\validators\SlugValidator;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property MetaForm $meta
  */
 class CategoryForm extends CompositeForm
 {
-    public string $name;
-    public string $slug;
-    public string $title;
-    public string $description;
-    public int $parentId;
-    private Category|null $_category;
+    public $name;
+    public $slug;
+    public $title;
+    public $description;
+    public $parentId;
+    private $_category;
 
     public function __construct(Category $category = null, $config = [])
     {
@@ -50,5 +51,12 @@ class CategoryForm extends CompositeForm
     protected function internalForms(): array
     {
         return ['meta'];
+    }
+
+    public function parentCategoriesList(): array
+    {
+        return ArrayHelper::map(Category::find()->orderBy('lft')->asArray()->all(), 'id', function (array $category) {
+            return ($category['depth'] > 1 ? str_repeat('-- ', $category['depth'] - 1) . ' ' : '') . $category['name'];
+        });
     }
 }

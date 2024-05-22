@@ -47,23 +47,25 @@ class Product extends ActiveRecord
 {
     public Meta $meta;
 
-    public static function create(int $brandId, int $categoryId, string $code, string $name, Meta $meta): self
+    public static function create(int $brandId, int $categoryId, string $code, string $name, string $description, Meta $meta): self
     {
         $product = new static();
         $product->brand_id = $brandId;
         $product->category_id = $categoryId;
         $product->code = $code;
         $product->name = $name;
+        $product->description = $description;
         $product->meta = $meta;
         $product->created_at = time();
         return $product;
     }
 
-    public function edit(int $brandId, string $code, string $name, Meta $meta): void
+    public function edit(int $brandId, string $code, string $name, string $description, Meta $meta): void
     {
         $this->brand_id = $brandId;
         $this->code = $code;
         $this->name = $name;
+        $this->description = $description;
         $this->meta = $meta;
     }
 
@@ -270,8 +272,8 @@ class Product extends ActiveRecord
         foreach ($photos as $i => $photo) {
             if ($photo->isIdEqualTo($id)) {
                 if ($prev = $photos[$i - 1] ?? null) {
-                    $photos[$i] = $prev;
                     $photos[$i - 1] = $photo;
+                    $photos[$i] = $prev;
                     $this->updatePhotos($photos);
                 }
                 return;
@@ -302,6 +304,7 @@ class Product extends ActiveRecord
             $photo->setSort($i);
         }
         $this->photos = $photos;
+        $this->populateRelation('mainPhoto', reset($photos));
     }
 
     public function assignTag(int $id): void
@@ -425,5 +428,14 @@ class Product extends ActiveRecord
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
+    }
+
+    public function afterSave($insert, $changedAttributes): void
+    {
+        $related = $this->getRelatedRecords();
+        if (array_key_exists('mainPhoto', $related)) {
+            $this->updateAttributes(['main_photo_id' => $related['mainPhoto'] ? $related['mainPhoto']->id : null]);
+        }
+        parent::afterSave($insert, $changedAttributes);
     }
 }

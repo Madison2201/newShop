@@ -18,6 +18,7 @@ class ProductEditForm extends CompositeForm
     public int $brandId;
     public string $code;
     public string $name;
+    public string $description;
 
     private Product|null $_product;
 

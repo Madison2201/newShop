@@ -14,16 +14,23 @@ use yii\db\ActiveRecord;
  * @property string $slug
  * @property string $title
  * @property string $description
+ * @property integer $lft
+ * @property integer $rgt
+ * @property integer $depth
  * @property Meta $meta
  *
  * @property Category $parent
+ * @property Category[] $parents
+ * @property Category[] $children
+ * @property Category $prev
+ * @property Category $next
  * @mixin NestedSetsBehavior
  */
 class Category extends ActiveRecord
 {
-    public Meta $meta;
+    public $meta;
 
-    public static function create(string $name, string $slug, string $title, string $description, Meta $meta): self
+    public static function create($name, $slug, $title, $description, Meta $meta): self
     {
         $category = new static();
         $category->name = $name;
@@ -34,7 +41,7 @@ class Category extends ActiveRecord
         return $category;
     }
 
-    public function edit(string $name, string $slug, string $title, string $description, Meta $meta): void
+    public function edit($name, $slug, $title, $description, Meta $meta): void
     {
         $this->name = $name;
         $this->slug = $slug;
@@ -43,15 +50,26 @@ class Category extends ActiveRecord
         $this->meta = $meta;
     }
 
+    public function getSeoTitle(): string
+    {
+        return $this->meta->title ?: $this->getHeadingTile();
+    }
+
+    public function getHeadingTile(): string
+    {
+        return $this->title ?: $this->name;
+    }
+
     public static function tableName(): string
     {
-        return "{{%shop_categories}}";
+        return '{{%shop_categories}}';
     }
+
 
     public function behaviors(): array
     {
         return [
-            MetaBehavior::class,
+            MetaBehavior::className(),
             NestedSetsBehavior::class,
         ];
     }
@@ -59,7 +77,7 @@ class Category extends ActiveRecord
     public function transactions(): array
     {
         return [
-            self::SCENARIO_DEFAULT => self::OP_ALL
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
@@ -67,4 +85,6 @@ class Category extends ActiveRecord
     {
         return new CategoryQuery(static::class);
     }
+
+
 }

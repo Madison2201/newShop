@@ -12,7 +12,7 @@ class CharacteristicManageService
 
     public function __construct(CharacteristicRepository $characteristic)
     {
-        $this->$characteristic = $characteristic;
+        $this->characteristic = $characteristic;
     }
 
     public function create(CharacteristicForm $form): Characteristic

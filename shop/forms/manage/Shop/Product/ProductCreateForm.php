@@ -20,6 +20,7 @@ class ProductCreateForm extends CompositeForm
     public int $brandId;
     public string $code;
     public string $name;
+    public string $description;
 
     public function __construct($config = [])
     {

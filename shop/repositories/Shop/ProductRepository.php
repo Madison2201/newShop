@@ -2,6 +2,7 @@
 
 namespace shop\repositories\Shop;
 
+use shop\entities\Shop\Category;
 use shop\entities\Shop\Product\Product;
 use shop\repositories\NotFoundException;
 
@@ -32,5 +33,9 @@ class ProductRepository
     public function existsByBrand(int $id): bool
     {
         return Product::find()->andWhere(['brand_id' => $id])->exists();
+    }
+    public function existsByMainCategory(int $id): bool
+    {
+        return Category::find()->andWhere(['category_id' => $id])->exists();
     }
 }
