@@ -11,4 +11,6 @@ return [
     'backendHostInfo' => 'http://backend.example.com',
     'user.rememberMeDuration' => 3600 * 24 * 30,
     'bsVersion' => '4.x',
+    'staticHostInfo' => 'http://static.example.com',
+    'staticPath' => dirname(__DIR__) . '/../static',
 ];
