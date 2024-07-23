@@ -45,9 +45,12 @@ use yii\web\UploadedFile;
  */
 class Product extends ActiveRecord
 {
+
+    const STATUS_DRAFT = 0;
+    const STATUS_ACTIVE = 1;
     public Meta $meta;
 
-    public static function create(int $brandId, int $categoryId, string $code, string $name, string $description, Meta $meta): self
+    public static function create(int $brandId, int $categoryId, string $code, string $name, string $description = null, Meta $meta): self
     {
         $product = new static();
         $product->brand_id = $brandId;
@@ -56,6 +59,9 @@ class Product extends ActiveRecord
         $product->name = $name;
         $product->description = $description;
         $product->meta = $meta;
+        $product->quantity = 1;
+        $product->weight = 1;
+        $product->status = 0;
         $product->created_at = time();
         return $product;
     }
@@ -109,7 +115,7 @@ class Product extends ActiveRecord
         throw new DomainException('Modification is not found.');
     }
 
-    public function addModification(string $code, string $name, string $price): void
+    public function addModification(string $code, string $name, string $price, int $quantity): void
     {
         $modifications = $this->modifications;
         foreach ($modifications as $modification) {
@@ -117,8 +123,29 @@ class Product extends ActiveRecord
                 throw new DomainException('Modification already exists.');
             }
         }
-        $modifications[] = Modification::create($code, $name, $price);
+        $modifications[] = Modification::create($code, $name, $price, $quantity);
         $this->modifications = $modifications;
+    }
+
+    public function removeModification($id): void
+    {
+        $modifications = $this->modifications;
+        foreach ($modifications as $i => $modification) {
+            if ($modification->isIdEqualTo($id)) {
+                unset($modifications[$i]);
+                $this->updateModifications($modifications);
+                return;
+            }
+        }
+        throw new \DomainException('Modification is not found.');
+    }
+
+    private function updateModifications(array $modifications): void
+    {
+        $this->modifications = $modifications;
+        $this->setQuantity(array_sum(array_map(function (Modification $modification) {
+            return $modification->quantity;
+        }, $this->modifications)));
     }
 
     public function editModification(int $id, string $code, string $name, string $price): void
@@ -315,7 +342,7 @@ class Product extends ActiveRecord
                 return;
             }
         }
-        $assignments[] = CategoryAssignment::create($id);
+        $assignments[] = TagAssignment::create($id);
         $this->tagAssignments = $assignments;
     }
 
@@ -377,6 +404,11 @@ class Product extends ActiveRecord
         return $this->hasMany(CategoryAssignment::class, ['product_id' => 'id']);
     }
 
+    public function getCategories(): ActiveQuery
+    {
+        return $this->hasMany(Category::class, ['id' => 'category_id'])->via('categoryAssignments');
+    }
+
     public function getTagAssignments(): ActiveQuery
     {
         return $this->hasMany(TagAssignment::class, ['product_id' => 'id']);
@@ -386,15 +418,23 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(Modification::class, ['product_id' => 'id']);
     }
-
+    public function getTags(): ActiveQuery
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])->via('tagAssignments');
+    }
     public function getValues(): ActiveQuery
     {
-        return $this->hasOne(Value::class, ['product_id' => 'id']);
+        return $this->hasMany(Value::class, ['product_id' => 'id']);
     }
 
     public function getPhotos(): ActiveQuery
     {
         return $this->hasMany(Photo::class, ['product_id' => 'id'])->orderBy('sort');
+    }
+
+    public function getMainPhoto(): ActiveQuery
+    {
+        return $this->hasOne(Photo::class, ['id' => 'main_photo_id']);
     }
 
     public function getRelatedAssignments(): ActiveQuery
@@ -406,6 +446,7 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(Review::class, ['product_id' => 'id']);
     }
+
 
     public static function tableName(): string
     {

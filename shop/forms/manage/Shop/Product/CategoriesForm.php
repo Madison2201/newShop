@@ -2,14 +2,15 @@
 
 namespace shop\forms\manage\Shop\Product;
 
+use shop\entities\Shop\Category;
 use shop\entities\Shop\Product\Product;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 class CategoriesForm extends Model
 {
-    public int $main;
-    public array $others = [];
+    public $main;
+    public $others = [];
 
     public function __construct(Product $product = null, $config = [])
     {
@@ -20,6 +21,13 @@ class CategoriesForm extends Model
         parent::__construct($config);
     }
 
+    public function categoriesList(): array
+    {
+        return ArrayHelper::map(Category::find()->andWhere(['>', 'depth', 0])->orderBy('lft')->asArray()->all(), 'id', function (array $category) {
+            return ($category['depth'] > 1 ? str_repeat('-- ', $category['depth'] - 1) . ' ' : '') . $category['name'];
+        });
+    }
+
     public function rules(): array
     {
         return [
@@ -27,5 +35,10 @@ class CategoriesForm extends Model
             ['main', 'integer'],
             ['others', 'each', 'rule' => ['integer']],
         ];
+    }
+    public function beforeValidate(): bool
+    {
+        $this->others = array_filter((array)$this->others);
+        return parent::beforeValidate();
     }
 }

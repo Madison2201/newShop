@@ -34,7 +34,7 @@ class Characteristic extends ActiveRecord
         return $object;
     }
 
-    public function edit(string $name, string $type, bool $required, string $default, array $variants, int $sort): self
+    public function edit(string $name, string $type, bool $required, string $default, array $variants, int $sort): void
     {
         $this->name = $name;
         $this->type = $type;
@@ -42,6 +42,21 @@ class Characteristic extends ActiveRecord
         $this->default = $default;
         $this->variants = $variants;
         $this->sort = $sort;
+    }
+
+    public function isInteger(): bool
+    {
+        return $this->type === self::TYPE_INTEGER;
+    }
+
+    public function isFloat(): bool
+    {
+        return $this->type === self::TYPE_FLOAT;
+    }
+
+    public function isString(): bool
+    {
+        return $this->type === self::TYPE_STRING;
     }
 
     public function isSelect(): bool

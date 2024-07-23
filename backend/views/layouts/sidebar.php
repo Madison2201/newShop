@@ -42,6 +42,7 @@
                         ['label' => 'Tags', 'icon' => 'tag', 'url' => ['shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
                         ['label' => 'Category', 'icon' => 'list', 'url' => ['shop/category/index'], 'active' => $this->context->id == 'shop/category'],
                         ['label' => 'Characteristic', 'icon' => 'file-code', 'url' => ['shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
+                        ['label' => 'Products', 'icon' => 'file', 'url' => ['shop/product/index'], 'active' => $this->context->id == 'shop/product'],
                     ]],
                     [
                         'label' => 'Пользователи',

@@ -9,7 +9,7 @@ use yii\web\UploadedFile;
 
 class ValueForm extends Model
 {
-    public string|null $value;
+    public $value;
     private Characteristic $_characteristic;
 
     public function __construct(Characteristic $characteristic, Value $value = null, $config = [])
@@ -30,6 +30,11 @@ class ValueForm extends Model
             $this->_characteristic->isFloat() ? ['value', 'number'] : false,
             ['value', 'safe'],
         ]);
+    }
+
+    public function variantsList(): array
+    {
+        return $this->_characteristic->variants ? array_combine($this->_characteristic->variants, $this->_characteristic->variants) : [];
     }
 
     public function getAttributeLabels(): array

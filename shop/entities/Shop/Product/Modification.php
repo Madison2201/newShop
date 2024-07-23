@@ -13,16 +13,17 @@ use yii\db\ActiveRecord;
  */
 class Modification extends ActiveRecord
 {
-    public static function create(string $code, string $name, string $price): self
+    public static function create(string $code, string $name, string $price, int $quantity): self
     {
         $modification = new static();
         $modification->code = $code;
         $modification->name = $name;
         $modification->price = $price;
+        $modification->quantity = $quantity;
         return $modification;
     }
 
-    public function edit(string $code, string $name, string $price): void
+    public function edit(string $code, string $name, string $price, int $quantity): void
     {
         $this->code = $code;
         $this->name = $name;
@@ -41,6 +42,6 @@ class Modification extends ActiveRecord
 
     public static function tableName(): string
     {
-        return "{{%shop_modification}}";
+        return "{{%shop_modifications}}";
     }
 }

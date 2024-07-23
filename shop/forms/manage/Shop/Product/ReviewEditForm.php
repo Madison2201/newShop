@@ -7,8 +7,8 @@ use yii\base\Model;
 
 class ReviewEditForm extends Model
 {
-    public int $vote;
-    public string $text;
+    public $vote;
+    public $text;
 
     public function __construct(Review $review, $config = [])
     {

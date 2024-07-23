@@ -2,10 +2,12 @@
 
 namespace shop\forms\manage\Shop\Product;
 
+use shop\entities\Shop\Brand;
 use shop\entities\Shop\Characteristic;
 use shop\entities\Shop\Product\Product;
 use shop\forms\CompositeForm;
 use shop\forms\manage\MetaForm;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property PriceForm $price
@@ -17,10 +19,11 @@ use shop\forms\manage\MetaForm;
  */
 class ProductCreateForm extends CompositeForm
 {
-    public int $brandId;
-    public string $code;
-    public string $name;
-    public string $description;
+    public $brandId;
+    public $code;
+    public $name;
+    public $description;
+    public $weight;
 
     public function __construct($config = [])
     {
@@ -38,15 +41,23 @@ class ProductCreateForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['brandId', 'code', 'name'], 'required'],
+            [['brandId', 'code', 'name', ], 'required'],
             [['code', 'name'], 'string', 'max' => 255],
-            ['brandId', 'integer'],
+            [['brandId'], 'integer'],
             [['code'], 'unique', 'targetClass' => Product::class],
+            ['description', 'string'],
+            ['description', 'string'],
+            ['weight', 'integer', 'min' => 0],
         ];
+    }
+
+    public function brandsList(): array
+    {
+        return ArrayHelper::map(Brand::find()->orderBy('name')->asArray()->all(), 'id', 'name');
     }
 
     protected function internalForms(): array
     {
-        return ['price', 'meta', 'photos', 'categories', 'tags', 'values'];
+        return ['price', 'quantity', 'meta', 'photos', 'categories', 'tags', 'values'];
     }
 }

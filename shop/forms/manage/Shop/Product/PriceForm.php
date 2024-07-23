@@ -7,8 +7,8 @@ use yii\base\Model;
 
 class PriceForm extends Model
 {
-    public int $old;
-    public int $new;
+    public $old;
+    public $new;
 
     public function __construct(Product $product = null, $config = [])
     {

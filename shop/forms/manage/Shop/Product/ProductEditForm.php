@@ -15,10 +15,10 @@ use shop\forms\manage\MetaForm;
  */
 class ProductEditForm extends CompositeForm
 {
-    public int $brandId;
-    public string $code;
-    public string $name;
-    public string $description;
+    public  $brandId;
+    public  $code;
+    public  $name;
+    public  $description;
 
     private Product|null $_product;
 

@@ -7,10 +7,10 @@ use yii\base\Model;
 
 class ModificationForm extends Model
 {
-    public string $code;
-    public string $name;
-    public string $price;
-    public mixed $quantity;
+    public $code;
+    public $name;
+    public $price;
+    public $quantity;
 
     public function __construct(Modification $modification = null, $config = [])
     {
@@ -27,7 +27,7 @@ class ModificationForm extends Model
     {
         return [
             [['code', 'name', 'quantity'], 'required'],
-            [['price'], 'integer'],
+            [['price','quantity'], 'integer'],
         ];
     }
 }
