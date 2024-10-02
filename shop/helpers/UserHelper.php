@@ -2,6 +2,7 @@
 
 namespace shop\helpers;
 
+use Exception;
 use shop\entities\User\User;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -17,23 +18,24 @@ class UserHelper
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public static function statusName(int $status): string
     {
         return ArrayHelper::getValue(self::statusList(), $status);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function statusLabel(int $status): string
     {
-        switch ($status) {
-            case User::STATUS_ACTIVE:
-                $class = 'badge badge-success';
-                break;
-            case User::STATUS_INACTIVE:
-                $class = 'badge badge-secondary';
-                break;
-            default:
-                $class = 'badge badge-danger';
-        }
+        $class = match ($status) {
+            User::STATUS_ACTIVE => 'badge badge-success',
+            User::STATUS_INACTIVE => 'badge badge-secondary',
+            default => 'badge badge-danger',
+        };
         return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
             'class' => $class
         ]);
